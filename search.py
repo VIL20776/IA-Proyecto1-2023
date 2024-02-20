@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -17,6 +17,7 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
+from inspect import _empty
 import util
 
 class SearchProblem:
@@ -113,8 +114,35 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # Stack para almacenar los nodos que tenemos por explorar
+    frontier = util.Stack()
+    # Lista para almacenar los nodos que ya hemos explorado
+    expanded = []
+    # Añadimos el nodo inicial a la pila, con lista de acción vacía
+    frontier.push((problem.getStartState(), []))
+
+    # Mientras la pila frontier no esté vacía, seguimos explorando nodos
+    while frontier.isEmpty() == False:
+        # Sacamos el primer nodo de la pila y lo separamos en nodo y acciones
+        current_state, current_moves = frontier.pop()
+        # Si el nodo es el objetivo
+        if problem.isGoalState(current_state):
+            # Devolvemos la lista de acciones
+            print('Current Moves', current_moves)
+            return current_moves
+        # Si el nodo no ha sido explorado
+        if current_state not in expanded:
+            # Lo añadimos a la lista de nodos explorados
+            expanded.append(current_state)
+            # Exploramos los nodos hijos
+            for child_state, child_move, child_cost in problem.expand(current_state):
+                # Añadimos los movimientos que ya llevamos al hijo, más el nuevo movimiento que lleva al hijo
+                new_moves = current_moves + [child_move]
+                # Añadimos el hijo a la pila de nodos por explorar
+                frontier.push((child_state, new_moves))
+    # Si no hemos encontrado el nodo objetivo, regresamos una lista vacía
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
