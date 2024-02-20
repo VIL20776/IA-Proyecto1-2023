@@ -168,7 +168,7 @@ def breadthFirstSearch(problem):
             # Lo añadimos a la lista de nodos explorados
             expanded.append(current_state)
             # Exploramos los nodos hijos
-            for child_state, child_move, child_cost in reversed(problem.expand(current_state)):
+            for child_state, child_move, child_cost in problem.expand(current_state):
                 # Añadimos los movimientos que ya llevamos al hijo, más el nuevo movimiento que lleva al hijo
                 new_moves = current_moves + [child_move]
                 # Añadimos el hijo a la pila de nodos por explorar
@@ -193,8 +193,33 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Queue para almacenar los nodos que tenemos por explorar
+    frontier = util.PriorityQueue()
+    # Lista para almacenar los nodos que ya hemos explorado
+    expanded = []
+    # Añadimos el nodo inicial a la pila, con lista de acción vacía
+    frontier.push((problem.getStartState(), [], 0), 0)
+
+    # Mientras la pila frontier no esté vacía, seguimos explorando nodos
+    while frontier.isEmpty() == False:
+        # Sacamos el primer nodo de la pila y lo separamos en nodo y acciones
+        current_state, current_moves, g_score = frontier.pop()
+        # Si el nodo es el objetivo
+        if problem.isGoalState(current_state):
+            # Agregamos la ruta a la lista de rutas
+            return current_moves
+        # Si el nodo no ha sido explorado
+        if current_state not in expanded:
+            # Lo añadimos a la lista de nodos explorados
+            expanded.append(current_state)
+            # Exploramos los nodos hijos
+            for child_state, child_move, child_cost in problem.expand(current_state):
+                # Añadimos los movimientos que ya llevamos al hijo, más el nuevo movimiento que lleva al hijo
+                new_moves = current_moves + [child_move]
+                new_g_score = g_score + child_cost
+                new_f_score = new_g_score + heuristic(child_state, problem)
+                # Añadimos el hijo a la pila de nodos por explorar
+                frontier.update((child_state, new_moves, new_g_score), new_f_score)
 
 
 # Abbreviations
