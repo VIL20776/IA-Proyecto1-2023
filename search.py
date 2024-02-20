@@ -162,7 +162,11 @@ def breadthFirstSearch(problem):
         # Si el nodo es el objetivo
         if problem.isGoalState(current_state):
             # Agregamos la ruta a la lista de rutas
-            routes.append((current_state, current_moves))
+            """ Usado en comparaciones de rutas """
+            # routes.append((current_state, current_moves))
+
+            # Devolvemos la lista de movimientos
+            return current_moves
         # Si el nodo no ha sido explorado
         if current_state not in expanded:
             # Lo añadimos a la lista de nodos explorados
@@ -173,16 +177,18 @@ def breadthFirstSearch(problem):
                 new_moves = current_moves + [child_move]
                 # Añadimos el hijo a la pila de nodos por explorar
                 frontier.push((child_state, new_moves))
-    # Agaramos el primer valor de la lista de rutas
-    best = routes[0][1];
-    # Comparamos las rutas para ver cuál es la mejor
-    for route in routes:
-        # Si existe una ruta más corta que la que ya tenemos
-        if len(route[1]) < len(best):
-            # Reemplazamos la mejor ruta por la ruta más corta
-            best = route[1]
-    # Devolvemos la mejor ruta
-    return best
+
+    """ Comparaciones de rutas para obtener ruta más corta """
+    # # Agaramos el primer valor de la lista de rutas
+    # best = routes[0][1];
+    # # Comparamos las rutas para ver cuál es la mejor
+    # for route in routes:
+    #     # Si existe una ruta más corta que la que ya tenemos
+    #     if len(route[1]) < len(best):
+    #         # Reemplazamos la mejor ruta por la ruta más corta
+    #         best = route[1]
+    # # Devolvemos la mejor ruta
+    # return best
 
 def nullHeuristic(state, problem=None):
     """
