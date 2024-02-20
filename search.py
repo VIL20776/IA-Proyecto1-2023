@@ -129,7 +129,6 @@ def depthFirstSearch(problem):
         # Si el nodo es el objetivo
         if problem.isGoalState(current_state):
             # Devolvemos la lista de acciones
-            print('Current Moves', current_moves)
             return current_moves
         # Si el nodo no ha sido explorado
         if current_state not in expanded:
@@ -146,8 +145,44 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # Queue para almacenar los nodos que tenemos por explorar
+    frontier = util.Queue()
+    # Lista para almacenar los nodos que ya hemos explorado
+    expanded = []
+    # Añadimos el nodo inicial a la pila, con lista de acción vacía
+    frontier.push((problem.getStartState(), []))
+    # Lista para almacenar las rutas que vayan llegando a la meta
+    routes = []
+
+    # Mientras la pila frontier no esté vacía, seguimos explorando nodos
+    while frontier.isEmpty() == False:
+        # Sacamos el primer nodo de la pila y lo separamos en nodo y acciones
+        current_state, current_moves = frontier.pop()
+        # Si el nodo es el objetivo
+        if problem.isGoalState(current_state):
+            # Agregamos la ruta a la lista de rutas
+            routes.append((current_state, current_moves))
+        # Si el nodo no ha sido explorado
+        if current_state not in expanded:
+            # Lo añadimos a la lista de nodos explorados
+            expanded.append(current_state)
+            # Exploramos los nodos hijos
+            for child_state, child_move, child_cost in reversed(problem.expand(current_state)):
+                # Añadimos los movimientos que ya llevamos al hijo, más el nuevo movimiento que lleva al hijo
+                new_moves = current_moves + [child_move]
+                # Añadimos el hijo a la pila de nodos por explorar
+                frontier.push((child_state, new_moves))
+    # Agaramos el primer valor de la lista de rutas
+    best = routes[0][1];
+    # Comparamos las rutas para ver cuál es la mejor
+    for route in routes:
+        # Si existe una ruta más corta que la que ya tenemos
+        if len(route[1]) < len(best):
+            # Reemplazamos la mejor ruta por la ruta más corta
+            best = route[1]
+    # Devolvemos la mejor ruta
+    return best
 
 def nullHeuristic(state, problem=None):
     """
