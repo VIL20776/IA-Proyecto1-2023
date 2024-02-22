@@ -315,6 +315,9 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        # Retorna una tupla que contiene la posición inicial de Pacman
+        # y una lista vacía para almacenar información adicional si es necesario.
+        return (self.startingPosition, [])
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -322,7 +325,19 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Extrae la posición actual del nodo y las esquinas visitadas del estado
+        node = state[0]
+        visitedCorners = state[1]
+
+        # Comprueba si la posición actual del nodo está en las esquinas del tablero
+        if node in self.corners:
+            # Si el nodo está en una esquina y aún no ha sido visitado, agrégalo a las esquinas visitadas
+            if not node in visitedCorners:
+                visitedCorners.append(node)
+            # Retorna True si se han visitado todas las esquinas, de lo contrario, False
+            return len(visitedCorners) == 4
+        # Retorna False si el nodo no está en una esquina
+        return False
 
     def expand(self, state):
         """
@@ -334,12 +349,36 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that child
         """
-
+        # Extrae las coordenadas (x, y) del nodo del estado actual
+        x, y = state[0]
+        # Extrae las esquinas visitadas del estado actual
+        visitedCorners = state[1]
         children = []
-        for action in self.getActions(state):
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a child state to the child list if the action is legal
             # You should call getActions, getActionCost, and getNextState.
             "*** YOUR CODE HERE ***"
+            # Calcula el desplazamiento en las coordenadas (dx, dy) basado en la acción
+            dx, dy = Actions.directionToVector(action)
+            # Calcula las coordenadas del próximo nodo basado en el desplazamiento
+            nextx, nexty = int(x + dx), int(y + dy)
+            # Verifica si el próximo nodo golpea una pared
+            hitsWall = self.walls[nextx][nexty]
+            # Si no hay una pared en el próximo nodo, crea un hijo
+            if not hitsWall:
+                # Copia la lista de esquinas visitadas del estado actual
+                childVisitedCorners = list(visitedCorners)
+                # Calcula el siguiente nodo
+                next_node = (nextx, nexty)
+                # Si el próximo nodo está en una esquina y no ha sido visitado,
+                # añádelo a las esquinas visitadas por el hijo
+                if next_node in self.corners:
+                    if next_node not in childVisitedCorners:
+                        childVisitedCorners.append(next_node)
+                # Crea un nuevo estado hijo con el próximo nodo y las esquinas visitadas
+                child = ((next_node, childVisitedCorners), action, 1)
+                # Agrega el estado hijo a la lista de estados hijos
+                children.append(child)
 
         self._expanded += 1 # DO NOT CHANGE
         return children
@@ -400,7 +439,33 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    # Encuentra qué esquinas quedan por alcanzar para llegar al estado objetivo.
+    visitedCorners = state[1] # Extrae las esquinas visitadas del estado actual
+    cornersLeftToVisit = []# Inicializa una lista para almacenar las esquinas que quedan por visitar
+    
+    # Itera sobre todas las esquinas del tablero
+    for corner in corners:
+        # Si la esquina no ha sido visitada, agrégala a la lista de esquinas por visitar
+        if corner not in visitedCorners:
+            cornersLeftToVisit.append(corner)
+
+    # Mientras haya esquinas por visitar, calcula el costo total del camino más eficiente para cada esquina.
+    totalCost = 0 # Inicializa el costo total del camino más eficiente
+    coordinate = state[0] # Extrae las coordenadas actuales del estado
+    curPoint = coordinate # Inicializa el punto actual como las coordenadas actuales
+
+    while cornersLeftToVisit:
+        # Encuentra la esquina más cercana a partir del punto actual usando la distancia de Manhattan
+        heuristic_cost, corner = \
+            min([(util.manhattanDistance(curPoint, corner), corner) for corner in cornersLeftToVisit])
+         # Remueve la esquina más cercana de la lista de esquinas por visitar
+        cornersLeftToVisit.remove(corner)
+        # Actualiza el punto actual al punto más cercano encontrado
+        curPoint = corner
+        # Añade el costo heurístico de alcanzar esta esquina al costo total
+        totalCost += heuristic_cost
+    # Retorna el costo total del camino más eficiente para visitar todas las esquinas restantes.
+    return totalCost
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
