@@ -34,6 +34,7 @@ description for details.
 Good luck and happy searching!
 """
 
+from math import sqrt
 from game import Directions
 from game import Agent
 from game import Actions
@@ -550,6 +551,7 @@ class AStarFoodSearchAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
+        # self.searchFunction = lambda prob: search.breadthFirstSearch(prob)
         self.searchType = FoodSearchProblem
 
 def foodHeuristic(state, problem):
@@ -582,27 +584,29 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    #maxheuristic = 0
-    #for p in foodGrid.asList():  # Calculates max heuristic using maze distance heuristic.
-     #   heuristic = mazeDistance(position, p, problem.startingGameState)
-     #   if maxheuristic < heuristic:
-      #      maxheuristic = heuristic
+    maxheuristic = 0
+    for p in foodGrid.asList():  # Calculates max heuristic using manhattan distence.
+       heuristic = util.manhattanDistance(position, p)
+       if maxheuristic < heuristic:
+           maxheuristic = heuristic
 
-   # return maxheuristic
-    #return len(foodGrid.asList()) # Gets 2/4 on autograder but expands 12517 nodes in ~9"
+    return maxheuristic
+    # return len(foodGrid.asList()) # Gets 2/4 on autograder but expands 12517 nodes in ~9"
 
     # 0/4 on autograder but expands 6126 nodes in ~3"
-    foodToEat = foodGrid.asList()
-    totalCost = 0
-    curPoint = position
-    while foodToEat:
-        heuristic_cost, food = \
-            min([(util.manhattanDistance(curPoint, food), food) for food in foodToEat])
-        foodToEat.remove(food)
-        curPoint = food
-        totalCost += heuristic_cost
+    # foodToEat = foodGrid.asList()
+    # totalCost = 0
+    # curPoint = position
+    # while foodToEat:
+    #     heuristic_cost, food = \
+    #         min([(util.manhattanDistance(curPoint, food), food) for food in foodToEat])
+    #     foodToEat.remove(food)
+    #     curPoint = food
+    #     totalCost += heuristic_cost
 
-    return totalCost
+    # if (totalCost < 0):
+    #     print(totalCost)
+    # return totalCost
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -634,9 +638,9 @@ class ClosestDotSearchAgent(SearchAgent):
 
         "*** YOUR CODE HERE ***"
          #return search.dfs(problem)   # 5324
-        #return search.bfs(problem)   # 350
+        return search.bfs(problem)   # 350
         #return search.ucs(problem)   # 350
-        return search.astar(problem) # 350
+        # return search.astar(problem) # 350
         #util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
