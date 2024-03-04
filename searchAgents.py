@@ -585,11 +585,12 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     maxheuristic = 0
-    for p in foodGrid.asList():  # Calculates max heuristic using manhattan distence.
+    for p in foodGrid.asList():  # Por cada posicion de la comida con respecto a la posicion actual, calcula la heuristica con distancia manhattan
        heuristic = util.manhattanDistance(position, p)
-       if maxheuristic < heuristic:
+       if maxheuristic < heuristic: # Si la heuristica es mayor, se guarada.
            maxheuristic = heuristic
 
+    # Se regresa el valor mas grande encontrado
     return maxheuristic
     
 
