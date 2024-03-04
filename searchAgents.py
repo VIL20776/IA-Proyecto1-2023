@@ -591,22 +591,7 @@ def foodHeuristic(state, problem):
            maxheuristic = heuristic
 
     return maxheuristic
-    # return len(foodGrid.asList()) # Gets 2/4 on autograder but expands 12517 nodes in ~9"
-
-    # 0/4 on autograder but expands 6126 nodes in ~3"
-    # foodToEat = foodGrid.asList()
-    # totalCost = 0
-    # curPoint = position
-    # while foodToEat:
-    #     heuristic_cost, food = \
-    #         min([(util.manhattanDistance(curPoint, food), food) for food in foodToEat])
-    #     foodToEat.remove(food)
-    #     curPoint = food
-    #     totalCost += heuristic_cost
-
-    # if (totalCost < 0):
-    #     print(totalCost)
-    # return totalCost
+    
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -637,11 +622,6 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-         #return search.dfs(problem)   # 5324
-        return search.bfs(problem)   # 350
-        #return search.ucs(problem)   # 350
-        # return search.astar(problem) # 350
-        #util.raiseNotDefined()
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
